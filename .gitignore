@@ -1,0 +1,7 @@
+/target/
+/bin/
+/nbproject/
+/.settings/
+/.classpath
+/.project
+/.aws-sam/

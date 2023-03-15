@@ -1,4 +1,4 @@
-package helloworld;
+package demo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,19 +11,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
-import software.amazon.lambda.powertools.logging.Logging;
 
 /**
  * Handler for requests to Lambda function.
  */
-public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+public class FrontEnd implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
      // Initialize the Log4j logger.
     Logger log = LogManager.getLogger();
     
     final static DSLContext dsl = PostgresDataSource.getDSL();
     
-    @Logging(logEvent = true)
     @Override
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
         log.debug(input);
@@ -36,6 +34,8 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         
         try {
             final var sb = renderHTMLStart();
+            
+            
             // List of tables in public
             final var table_name = DSL.field("table_name", String.class);
             final var tables = dsl.select(table_name)
@@ -62,6 +62,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
                     .withStatusCode(200)
                     .withBody(sb.toString());
         } catch (Exception e) {
+            log.error("Front End Error", e);
             return response
                     .withBody(e.toString())
                     .withStatusCode(500);

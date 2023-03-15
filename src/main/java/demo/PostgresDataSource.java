@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package helloworld;
+package demo;
 
 import com.amazonaws.secretsmanager.sql.AWSSecretsManagerPostgreSQLDriver;
 import java.sql.Connection;
@@ -16,7 +16,8 @@ import org.jooq.impl.DSL;
 import org.postgresql.PGConnection;
 
 /**
- * Connection to the Master with no Pooling
+ * Connection to the DB with secret managed by RDS.
+ * 
  * https://docs.aws.amazon.com/secretsmanager/latest/userguide/retrieving-secrets_jdbc.html
  * 
  * @author jensen

@@ -19,73 +19,39 @@ Globals:
     Environment: 
       Variables:
         JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
-        DB_MASTER_SECRET_ARN: !GetAtt ServerlessV2Cluster.MasterUserSecret.SecretArn
-        DB_ENDPOINT: !GetAtt ServerlessV2Cluster.Endpoint.Address
+        DB_MASTER_SECRET_ARN: !GetAtt RDSStack.Outputs.SecretArn
+        DB_ENDPOINT: !GetAtt RDSStack.Outputs.Endpoint
         DB_NAME: !Ref DBNAMEPARAM
     CodeUri: .
     Architectures:
         - arm64
     Runtime: java11
-    Timeout: 20
+    Timeout: 60
     MemorySize: 1024
 
 Resources:
-  RDSLambdaRole:
-        Type: AWS::IAM::Role
-        Properties:
-            Description:  Allow RDS to call Lambda Functions
-            AssumeRolePolicyDocument:
-                Version: 2012-10-17 
-                Statement:
-                    - Effect: Allow
-                      Principal:
-                        Service:
-                          - rds.amazonaws.com
-                      Action:
-                        - sts:AssumeRole
-            ManagedPolicyArns:
-              - arn:aws:iam::aws:policy/service-role/AWSLambdaRole   
+  
       
-      
-  ServerlessV2Cluster:
-    Type: 'AWS::RDS::DBCluster'
-    DeletionPolicy: Delete
+  RDSStack:
+    Type: AWS::CloudFormation::Stack
     Properties:
-      Engine: aurora-postgresql
-      Port: 5432
-      EngineVersion: 13.9
-      DatabaseName: !Ref DBNAMEPARAM
-      ManageMasterUserPassword: true
-      MasterUsername: !Ref DBUSERPARAM
-      DBSubnetGroupName: !Ref DBSubnetGroup
-      VpcSecurityGroupIds:
-        - !Ref RDSSecurityGroup
-      ServerlessV2ScalingConfiguration:
-        MinCapacity: 0.5
-        MaxCapacity: 1.0
-      AssociatedRoles:
-        - FeatureName: Lambda
-          RoleArn: !GetAtt RDSLambdaRole.Arn
-        
-  ServerlessInstance:
-    Type: AWS::RDS::DBInstance
-    Properties:
-      Engine: aurora-postgresql
-      DBClusterIdentifier: !Ref ServerlessV2Cluster
-      DBInstanceClass: db.serverless
-      PubliclyAccessible: true
+      TemplateURL: postgres.yaml
+      TimeoutInMinutes: '60'
+      Parameters:
+        DBNAMEPARAM: !Ref DBNAMEPARAM
+        DBUSERPARAM: !Ref DBUSERPARAM
         
   ApiGateway:
         Type: AWS::Serverless::HttpApi
         Properties:
             CorsConfiguration: true
             
-  HelloWorldFunction:
+  FrontEnd:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-Hello
-      Description: Displays Sample Postgres Table
-      Handler: helloworld.App
+      FunctionName: !Sub ${AWS::StackName}-DemoFrontEnd
+      Description: Displays Sample Postgres Table and allows Address Entry
+      Handler: demo.FrontEnd
       Policies: 
         - !Ref SecretsPolicy
       Events:
@@ -95,26 +61,51 @@ Resources:
             Path: /
             Method: get
             ApiId: !Ref ApiGateway
-            
-  DBFunction:
+    
+  PostgresAddressTrigger:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-DBScripting
+      FunctionName: PostgresAddressTrigger
+      Description: Lambda that will fire when changes are made to Address Table
+      Handler: demo.PostgresAddressTrigger
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 300
+        MaximumRetryAttempts: 1
+      Policies: 
+        - !Ref SecretsPolicy  
+            
+  PostgresGenericTrigger:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: PostgresGenericTrigger
+      Description: Lambda that will fire when changes are made to tables
+      Handler: demo.PostgresGenericTrigger
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 300
+        MaximumRetryAttempts: 1
+      Policies: 
+        - !Ref SecretsPolicy          
+            
+   
+  DBInitialization:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-DBInitialization
       Description: Performs the DB Scripting after DB creation
-      Handler: helloworld.DBScripting
+      Handler: demo.CloudFormationCustomResource
       Timeout: 120
-      EventInvokeConfig:  # Ensure this lambda errors quickly
-        MaximumEventAgeInSeconds: 180
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 300
         MaximumRetryAttempts: 1
       Policies: 
         - !Ref SecretsPolicy
             
   
   DBCustom:
-    Type: Custom::DBScripting
-    DependsOn: ServerlessInstance  # Make sure the writer instance is done before we run DB Scripts
+    Type: Custom::DBInitialization
+    DependsOn: RDSStack  # Make sure the RDS instance is done before we run DB Scripts
     Properties:
-        ServiceToken: !GetAtt DBFunction.Arn
+        ServiceToken: !GetAtt DBInitialization.Arn
 
   SecretsPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
@@ -127,103 +118,8 @@ Resources:
                 Action:
                   - 'secretsmanager:GetSecretValue'
                   - 'secretsmanager:DescribeSecret'
-                Resource: !GetAtt ServerlessV2Cluster.MasterUserSecret.SecretArn
-    
-    
-  VPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 10.20.0.0/16
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
-      Tags:
-        - Key: Name
-          Value: !Ref AWS::StackName
-
-  InternetGateway:
-    Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-        - Key: Name
-          Value: !Ref AWS::StackName
-
-  InternetGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      InternetGatewayId: !Ref InternetGateway
-      VpcId: !Ref VPC
-
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
-      CidrBlock: 10.20.1.0/24
-      MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: !Sub ${AWS::StackName} Public Subnet (AZ1)
-
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
-      CidrBlock: 10.20.2.0/24
-      MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: !Sub ${AWS::StackName} Public Subnet (AZ2)
-
-  DBSubnetGroup:
-    Type: AWS::RDS::DBSubnetGroup
-    Properties: 
-      DBSubnetGroupDescription: !Sub ${AWS::StackName} DB Subnet group
-      SubnetIds: 
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      Tags:
-        - Key: Name
-          Value: !Sub ${AWS::StackName} DB Subnet group
-  
-  RDSSecurityGroup:
-     Type: AWS::EC2::SecurityGroup
-     Properties:
-       GroupDescription: !Sub ${AWS::StackName} DB Security Group
-       VpcId: !Ref VPC
-       SecurityGroupIngress:  # Allow all Postgres Traffic in
-         - IpProtocol: tcp
-           FromPort: 5432
-           ToPort: 5432
-           CidrIp: 0.0.0.0/0 
-
-  PublicRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: !Ref AWS::StackName
-
-  DefaultPublicRoute:
-    Type: AWS::EC2::Route
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
-
-  PublicSubnet1RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet1
-
-  PublicSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet2
+                Resource: !GetAtt RDSStack.Outputs.SecretArn
+   
 
 
 Outputs:
@@ -232,5 +128,5 @@ Outputs:
     Value: !GetAtt ApiGateway.ApiEndpoint
   DBEndpoint:
     Description: "DB Endpoint"
-    Value: !GetAtt ServerlessV2Cluster.Endpoint.Address
+    Value: !GetAtt RDSStack.Outputs.Endpoint
      

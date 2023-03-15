@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Appenders>
-        <Console name="JsonAppender" target="SYSTEM_OUT">
-            <JsonTemplateLayout eventTemplateUri="classpath:LambdaJsonLayout.json" />
-        </Console>
-    </Appenders>
+    <Lambda name="Lambda">
+      <PatternLayout>
+          <pattern>%d{yyyy-MM-dd HH:mm:ss} %X{AWSRequestId} %-5p %c{1} - %m%n</pattern>
+      </PatternLayout>
+    </Lambda>
+  </Appenders>
     <Loggers>
-        <Logger name="JsonLogger" level="DEBUG" additivity="false">
-            <AppenderRef ref="JsonAppender"/>
+        <Logger name="Lambda" level="DEBUG" additivity="false">
+            <AppenderRef ref="Lambda"/>
         </Logger>
         <Root level="debug">
-            <AppenderRef ref="JsonAppender"/>
+            <AppenderRef ref="Lambda"/>
         </Root>
         
         <Logger name="software.amazon.lambda.powertools" level="DEBUG"/>
@@ -19,7 +21,7 @@
            
         <Logger name="software.amazon.awssdk.request" level="DEBUG"/>
           
-        <Logger name="org.jooq" level="WARN"/>
+        <Logger name="org.jooq" level="DEBUG"/>
             
     </Loggers>
 </Configuration>
