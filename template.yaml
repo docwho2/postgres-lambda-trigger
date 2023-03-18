@@ -93,12 +93,7 @@ Resources:
         MaximumRetryAttempts: 1
       Policies: 
         - !Ref SecretsPolicy
-        - Version: '2012-10-17' 
-          Statement:
-            - Effect: Allow
-              Action:
-                - geo:SearchPlaceIndexForText
-              Resource: !GetAtt PlaceIndex.Arn
+        - !Ref GeoCodingPolicy 
         
   PlaceIndex:
         Type: AWS::Location::PlaceIndex
@@ -155,7 +150,17 @@ Resources:
                   - 'secretsmanager:DescribeSecret'
                 Resource: !GetAtt RDSStack.Outputs.SecretArn
    
-
+  GeoCodingPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+        Description: Allow Lambdas to call geo API for coding addresses
+        PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - geo:SearchPlaceIndexForText
+                Resource: !GetAtt PlaceIndex.Arn
 
 Outputs:
   ApiEndpoint:
