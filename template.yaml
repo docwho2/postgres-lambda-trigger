@@ -61,25 +61,60 @@ Resources:
             Path: /
             Method: get
             ApiId: !Ref ApiGateway
+            
+            
+  CreateAddress:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-CreateAddressFrontEnd
+      Description: Creates an address row in table and redirects back to /
+      Handler: demo.CreateAddressFrontEnd
+      Policies: 
+        - !Ref SecretsPolicy
+      Events:
+        HelloWorld:
+          Type: HttpApi
+          Properties:
+            Path: /create
+            Method: get
+            ApiId: !Ref ApiGateway
     
   PostgresAddressTrigger:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: PostgresAddressTrigger
-      Description: Lambda that will fire when changes are made to Address Table
+      Description: Address trigger that will geo encode addresses on INSERT/UPDATE
       Handler: demo.PostgresAddressTrigger
+      Environment:
+        Variables:
+            PLACE_INDEX: !Ref PlaceIndex
       EventInvokeConfig:
         MaximumEventAgeInSeconds: 300
         MaximumRetryAttempts: 1
       Policies: 
-        - !Ref SecretsPolicy  
+        - !Ref SecretsPolicy
+        - Version: '2012-10-17' 
+          Statement:
+            - Effect: Allow
+              Action:
+                - geo:SearchPlaceIndexForText
+              Resource: !GetAtt PlaceIndex.Arn
+        
+  PlaceIndex:
+        Type: AWS::Location::PlaceIndex
+        Properties: 
+            DataSource: Esri
+            DataSourceConfiguration: 
+                IntendedUse: SingleUse
+            Description: Place Index for GEO queries
+            IndexName: PostresDemoIndex
             
-  PostgresGenericTrigger:
+  PostgresAuditLogTrigger:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: PostgresGenericTrigger
-      Description: Lambda that will fire when changes are made to tables
-      Handler: demo.PostgresGenericTrigger
+      FunctionName: PostgresAuditLogTrigger
+      Description: Lambda that will fire when changes are made to tables for audit logging
+      Handler: demo.PostgresAuditLogTrigger
       EventInvokeConfig:
         MaximumEventAgeInSeconds: 300
         MaximumRetryAttempts: 1
@@ -124,9 +159,18 @@ Resources:
 
 Outputs:
   ApiEndpoint:
-    Description: "API Gateway endpoint URL"
+    Description: "API Gateway endpoint URL, Open Browser to this to see demo"
     Value: !GetAtt ApiGateway.ApiEndpoint
+  DBName:
+    Description: "DB Name"
+    Value: !Ref DBNAMEPARAM
+  DBUsername:
+    Description: "DB Username"
+    Value: !Ref DBUSERPARAM
   DBEndpoint:
     Description: "DB Endpoint"
     Value: !GetAtt RDSStack.Outputs.Endpoint
+  DBURL:
+    Description: "JDBC Connection URL"
+    Value: !Sub 'jdbc:postgresql://${RDSStack.Outputs.Endpoint}/${DBNAMEPARAM}'
      

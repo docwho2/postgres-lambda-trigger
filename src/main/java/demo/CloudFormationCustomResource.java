@@ -12,12 +12,14 @@ import java.util.LinkedList;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.impl.DSL;
 import software.amazon.lambda.powertools.cloudformation.AbstractCustomResourceHandler;
 import software.amazon.lambda.powertools.cloudformation.Response;
 
 /**
  * Custom resource called from Cloud Formation after the RDS instance is done provisioning. This lambda is responsible
- * for running all the SQL files in the correct order to initialize the DB.
+ * for running all the SQL files in the correct order to initialize the DB.  Care should be taken to never throw an
+ * Exception back or this will stall the stack operation and error the stack.
  *
  * @author sjensen
  */
@@ -29,7 +31,7 @@ public class CloudFormationCustomResource extends AbstractCustomResourceHandler 
     @Override
     protected Response create(CloudFormationCustomResourceEvent cfcre, Context cntxt) {
         try {
-            log.debug("Received CREATE Event from Cloudformation",cfcre);
+            log.debug("Received CREATE Event from Cloudformation", cfcre);
             final var dsl = PostgresDataSource.getDSL();
             final var task_root = System.getenv("LAMBDA_TASK_ROOT");
 
@@ -38,6 +40,7 @@ public class CloudFormationCustomResource extends AbstractCustomResourceHandler 
             sqlFiles.add("enableLambdaExtension.sql");
             sqlFiles.add("LambdaTriggerFuction.sql");
             sqlFiles.add("createAddressTable.sql");
+            sqlFiles.add("createAuditLogTable.sql");
             sqlFiles.add("createAddressTrigger.sql");
 
             for (var file : sqlFiles) {
@@ -48,6 +51,15 @@ public class CloudFormationCustomResource extends AbstractCustomResourceHandler 
                 }
             }
 
+            // Just Insert One address to kick things off
+            var result = dsl.insertInto(DSL.table(DSL.name("address")))
+                    .set(DSL.field("address_1"), "200 N Main St")
+                    .set(DSL.field("city"), "Wahkon")
+                    .set(DSL.field("district"), "MN")
+                    .set(DSL.field("address_notes"), "Mugg's of Mille Lacs")
+                    .execute();
+            log.debug("Insert result for address = " + result);
+
         } catch (Exception e) {
             log.error("Could Not Process SQL Files", e);
         }
@@ -56,15 +68,27 @@ public class CloudFormationCustomResource extends AbstractCustomResourceHandler 
                 .build();
     }
 
+    /**
+     * We don't do anything on stack updates, just return null
+     * @param cfcre
+     * @param cntxt
+     * @return 
+     */
     @Override
     protected Response update(CloudFormationCustomResourceEvent cfcre, Context cntxt) {
-        log.debug("Received UPDAATE Event from Cloudformation",cfcre);
+        log.debug("Received UPDATE Event from Cloudformation", cfcre);
         return null;
     }
 
+    /**
+     * We don't need to do anything on stack delete, just return null
+     * @param cfcre
+     * @param cntxt
+     * @return 
+     */
     @Override
     protected Response delete(CloudFormationCustomResourceEvent cfcre, Context cntxt) {
-        log.debug("Received DELETE Event from Cloudformation",cfcre);
+        log.debug("Received DELETE Event from Cloudformation", cfcre);
         return null;
     }
 

@@ -17,11 +17,11 @@ CREATE TRIGGER "AddressLambdaTrigger"
 /**
 This is an example of sending insert/update/deletes for processing 
 on the Lambda which will not perform any changes to the data in this
-table.
+table.  It will just write audit log entries
 */
-DROP TRIGGER IF EXISTS "GenericLambdaTrigger" ON address;
-CREATE TRIGGER "GenericLambdaTrigger"
+DROP TRIGGER IF EXISTS "PostgresAuditLogTrigger" ON address;
+CREATE TRIGGER "PostgresAuditLogTrigger"
     AFTER INSERT OR UPDATE OR DELETE
     ON address
     FOR EACH ROW
-    EXECUTE FUNCTION record_change_lambda('PostgresGenricTrigger');
+    EXECUTE FUNCTION record_change_lambda('PostgresAuditLogTrigger');

@@ -35,12 +35,13 @@ public class FrontEnd implements RequestHandler<APIGatewayProxyRequestEvent, API
         try {
             final var sb = renderHTMLStart();
             
-            
+            sb.append("<a href=\"/create\">Add Row to Address Table</a>");
             // List of tables in public
             final var table_name = DSL.field("table_name", String.class);
             final var tables = dsl.select(table_name)
                     .from("information_schema.tables")
                     .where(DSL.field("table_schema").eq("public"))
+                    .orderBy(table_name)
                     .fetch(table_name);
                     
             if ( tables.isEmpty() ) {
