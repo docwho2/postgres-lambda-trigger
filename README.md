@@ -52,11 +52,11 @@ brew install corretto11
 brew install maven
 ```
 
-To build and deploy, run the following in your shell:
+To build and deploy, run the following in your shell after you have cloned the repo:
 
 ```bash
-sam build
-sam deploy
+postgres-lambda-trigger$ sam build
+postgres-lambda-trigger$ sam deploy
 ```
 
 The first command will build the source of the application. The second command will package and deploy the demo application to AWS.  You will see the progress as the stack deploys, be patient as it does take a while to spin up the Aurora Cluster and serverless postgres node. `Do not forget to delete the stack or you will continue to incure AWS charges for the DB`.  
@@ -92,6 +92,6 @@ You can find more information and examples about filtering Lambda function logs 
 To delete the demo, use the SAM CLI. `DO NOT FORGET TO RUN THIS OR YOU WILL CONTINUE TO BE CHARGED FOR AWS RESOURCES` (Namely the Aurora Postgres Cluster Node).  You can run the following:
 
 ```bash
-sam delete
+postgres-lambda-trigger$ sam delete
 ```
 
