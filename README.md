@@ -1,11 +1,34 @@
-# postgres-lambda-trigger
+# Postgres Java Lambda Trigger Demo 
 
+## Background
+
+This project demonstrates a full working model with UI that shows how to configure all of the resources to support calling Java [Lambda functions from AWS RDS Postgress](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL-Lambda.html).  If you're already a lambda guru and just want to see how to build some kind of payload in psql then simply take a look at the [Trigger function](src/main/resources/scripts/LambdaTriggerFuction.sql).
+
+Why even use this feature?  If you have many code bases that are writing data to Postgres, then how do you ensure that downline processing is done correctly on all data.  We typically fire off lambdas directly in code or push the id of the record to SNS or SQS.  This all works fine if all the places you insert data call the correct downline function.  But sometimes you simply need to edit or update the data directly in Postico or even just plain SQL.  By having Postgres call the Lambda you completely decouple the downline logic from the part of the appplication that inserts/updates/deletes the data.
+
+
+Two use cases are covered in this demo:
+- A Lambda that will update the same row that the trigger is firing on.  In this case, we have an address table, and when addresses are inserted or updated, they will be geo-coded by the [AWS Location API](https://docs.aws.amazon.com/location/latest/APIReference/API_SearchPlaceIndexForText.html).  Special care is needed in this case to prevent recursive triggering of the function.
+- A Lambda that will simply log all actions on the address table to an audit_log table.  As shown in some AWS examples, you could then simply put the payload onto a SNS Topic or SQS Queue for downline processing.
+
+Another goal of the project was to demonstrate:
+- SAM CloudFormation example for all the components in play (`sam build` and then `sam deploy`) for simple deployment of the project.
+- Managed RDS Secret for connecting to the DB and use of the [AWS JDBC Driver](https://docs.aws.amazon.com/secretsmanager/latest/userguide/retrieving-secrets_jdbc.html)
+- [Custom Resource](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html) to initialize the DB after creation.  Namely to enable the lambda extensions and create all the SQL resources necessary in Postgres.
+- Nested Stacks
+- To simply provide a full working example with Java and AWS RDS Postgres (what I use day to day).  The AWS Demo is MySQL with Node and there was nothing I could find that really showed a full use case in Java.
+
+
+## Contents
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
 - HelloWorldFunction/src/main - Code for the application's Lambda function.
 - events - Invocation events that you can use to invoke the function.
-- HelloWorldFunction/src/test - Unit tests for the application code. 
-- template.yaml - A template that defines the application's AWS resources.
+- [/src/main/resources/scripts](src/main/resources/scripts) - SQL Scripts used to initialize the DB from the [Custom Resource](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html) in CloudFormation.
+- CloudFormation scripts for all AWS resources
+	- [vpc.yaml](vpc.yaml) - Creates simple VPC with 2 public subnets
+	- [postgres.yaml](postgres.yaml) - Creates Auora Postgres Cluster with single serverlessV2 node
+	- [template.yaml](template.yaml) - Creates all the lambda functions
 
 The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
 

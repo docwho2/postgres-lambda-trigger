@@ -1,9 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  postgres-lambda-trigger
+  Postgres Java Lambda Trigger Demo
 
-  Sample SAM Template for postgres-lambda-trigger
 Parameters:
   DBNAMEPARAM:
     Description: The DB Name
@@ -62,7 +61,6 @@ Resources:
             Method: get
             ApiId: !Ref ApiGateway
             
-            
   CreateAddress:
     Type: AWS::Serverless::Function
     Properties:
@@ -78,6 +76,38 @@ Resources:
             Path: /create
             Method: get
             ApiId: !Ref ApiGateway
+            
+  DeleteAddress:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-DeleteAddressFrontEnd
+      Description: Deletes an address row in table and redirects back to /
+      Handler: demo.DeleteAddressFrontEnd
+      Policies: 
+        - !Ref SecretsPolicy
+      Events:
+        HelloWorld:
+          Type: HttpApi
+          Properties:
+            Path: /delete
+            Method: get
+            ApiId: !Ref ApiGateway
+            
+  DeleteAuditLog:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-DeleteAuditLogFrontEnd
+      Description: Clears the audit_log table and redirects back to /
+      Handler: demo.DeleteAuditLogFrontEnd
+      Policies: 
+        - !Ref SecretsPolicy
+      Events:
+        HelloWorld:
+          Type: HttpApi
+          Properties:
+            Path: /audit
+            Method: get
+            ApiId: !Ref ApiGateway
     
   PostgresAddressTrigger:
     Type: AWS::Serverless::Function
@@ -88,9 +118,10 @@ Resources:
       Environment:
         Variables:
             PLACE_INDEX: !Ref PlaceIndex
+      ReservedConcurrentExecutions: 2
       EventInvokeConfig:
-        MaximumEventAgeInSeconds: 300
-        MaximumRetryAttempts: 1
+        MaximumEventAgeInSeconds: 3600
+        MaximumRetryAttempts: 2
       Policies: 
         - !Ref SecretsPolicy
         - !Ref GeoCodingPolicy 
@@ -110,9 +141,10 @@ Resources:
       FunctionName: PostgresAuditLogTrigger
       Description: Lambda that will fire when changes are made to tables for audit logging
       Handler: demo.PostgresAuditLogTrigger
+      ReservedConcurrentExecutions: 2
       EventInvokeConfig:
-        MaximumEventAgeInSeconds: 300
-        MaximumRetryAttempts: 1
+        MaximumEventAgeInSeconds: 3600
+        MaximumRetryAttempts: 2
       Policies: 
         - !Ref SecretsPolicy          
             
@@ -125,7 +157,7 @@ Resources:
       Handler: demo.CloudFormationCustomResource
       Timeout: 120
       EventInvokeConfig:
-        MaximumEventAgeInSeconds: 300
+        MaximumEventAgeInSeconds: 600
         MaximumRetryAttempts: 1
       Policies: 
         - !Ref SecretsPolicy

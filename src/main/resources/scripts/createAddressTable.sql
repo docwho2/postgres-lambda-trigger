@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS address (
     city text NOT NULL,
     district text NOT NULL,
     postal_code text,
-    address_entered text,
     geo_coded timestamp without time zone,
     geo_last_coding jsonb,
     geo_latitude double precision,

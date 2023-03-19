@@ -35,7 +35,11 @@ public class FrontEnd implements RequestHandler<APIGatewayProxyRequestEvent, API
         try {
             final var sb = renderHTMLStart();
             
-            sb.append("<a href=\"/create\">Add Row to Address Table</a>");
+            sb.append("<h3>Postgres Java Lambda Trigger Demo</h3>");
+            sb.append("<a href=\"/create\" class=\"btn btn-primary\" role=\"button\">Add Row to Address Table</a>\n");
+            sb.append("<a href=\"/delete\" class=\"btn btn-warning\" role=\"button\">Delete Last Address</a>\n");
+            sb.append("<a href=\"javascript:location.reload()\" class=\"btn btn-primary\" role=\"button\">Refresh</a>\n");
+            sb.append("<a href=\"/audit\" class=\"btn btn-warning pull-right\" role=\"button\">Clear Audit Log</a>\n");
             // List of tables in public
             final var table_name = DSL.field("table_name", String.class);
             final var tables = dsl.select(table_name)
@@ -47,7 +51,7 @@ public class FrontEnd implements RequestHandler<APIGatewayProxyRequestEvent, API
             if ( tables.isEmpty() ) {
                 sb.append("<h2>No Tables exist in the Public Schema</h2>");
             } else {
-                sb.append("<h2>Listing data in all tables</h2>");
+                
                 // Kick out each table
                 for(var table : tables) {
                     sb.append(appendPanelStart("Table [" + table + "]"));
