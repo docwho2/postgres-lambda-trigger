@@ -59,7 +59,7 @@ sam build
 sam deploy
 ```
 
-The first command will build the source of the application. The second command will package and deploy the demo application to AWS.  You will see the progress as the stack deploy, be patient as it does take a while to spin up the Aurora Cluster and serverless postgres node. `Do not forget to delete the stack or you will continue to incure AWS charges for the DB`.  
+The first command will build the source of the application. The second command will package and deploy the demo application to AWS.  You will see the progress as the stack deploys, be patient as it does take a while to spin up the Aurora Cluster and serverless postgres node. `Do not forget to delete the stack or you will continue to incure AWS charges for the DB`.  
 
 
 You can find the API Gateway Endpoint URL in the output values displayed after deployment.  Open the URL with a web browser.
@@ -68,6 +68,12 @@ You can find the API Gateway Endpoint URL in the output values displayed after d
 
 ![Demo User Interface](UI.png)
 
+When you open the API GW Endpoint URL in your browser you will see the above UI.  When the DB initializes, one address row is inserted for you, so you should see 1 row with an address Geo encoded and 2 entries in the `audit_log` table.  The UI displays all the rows in both `address` and `audit_log` tables.  There are four actions to perform in the demo:
+
+- Add Row to Address Table - This adds Apple's HQ address to the table.  Normally after the refresh you would see the row without geo encoding.  If you then hit `Refresh`, you should see the Geo data populated into the row.
+- Delete Last Address - This deletes the last address row from the `address` table.  You should see the last row go aways and an `audit_log` row for the delete action.
+- Refresh - Does a simple refresh of the page (which reads all the tables again)
+- Clear Audit Log - Truncates the `audit_log` table.
 
 ## Fetch, tail, and filter Lambda function logs
 
@@ -83,7 +89,7 @@ You can find more information and examples about filtering Lambda function logs 
 
 ## Cleanup
 
-To delete the demo, use the SAM CLI. `DO NOT FORGET TO RUN THIS OR YOU WILL BE CHARGED FOR AWS RESOURCES`.  You can run the following:
+To delete the demo, use the SAM CLI. `DO NOT FORGET TO RUN THIS OR YOU WILL CONTINUE TO BE CHARGED FOR AWS RESOURCES` (Namely the Aurora Postgres Cluster Node).  You can run the following:
 
 ```bash
 sam delete
