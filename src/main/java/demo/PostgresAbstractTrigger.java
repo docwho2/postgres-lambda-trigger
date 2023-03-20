@@ -35,7 +35,7 @@ public abstract class PostgresAbstractTrigger implements RequestStreamHandler {
     public final void handleRequest(InputStream in, OutputStream out, Context cntxt) throws IOException {
         // Read in JSON Tree
         var json = mapper.readTree(in);
-        log.debug("INPUT JSON is " + json.toString());
+        log.debug("INPUT JSON is " + json.toPrettyString());
 
         try {
             final var operation = TG_OP.valueOf(json.findValue("TG_OP").asText());

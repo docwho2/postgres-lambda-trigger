@@ -25,3 +25,16 @@ CREATE TRIGGER "PostgresAuditLogTrigger"
     ON address
     FOR EACH ROW
     EXECUTE FUNCTION record_change_lambda('PostgresAuditLogTrigger');
+
+
+/**
+This is an example of sending insert/update/deletes for processing 
+on the Lambda which will not perform any changes to the data in this
+table.  It will just write audit log entries via SQS Queue
+*/
+DROP TRIGGER IF EXISTS "PostgresAuditLogTriggerSQS" ON address;
+CREATE TRIGGER "PostgresAuditLogTriggerSQS"
+    AFTER INSERT OR UPDATE OR DELETE
+    ON address
+    FOR EACH ROW
+    EXECUTE FUNCTION record_change_lambda('ForwardEventToSQS');

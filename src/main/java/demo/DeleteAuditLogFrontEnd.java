@@ -9,6 +9,7 @@ public class DeleteAuditLogFrontEnd extends AbstractActionFrontEnd {
     protected void performAction() {
         // Clear out the audit log
         dsl.truncate("audit_log").execute();
+        dsl.truncate("audit_log_sqs").execute();
     }
 
 }

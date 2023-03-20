@@ -25,7 +25,7 @@ Globals:
     Architectures:
         - arm64
     Runtime: java11
-    Timeout: 60
+    Timeout: 30
     MemorySize: 1024
 
 Resources:
@@ -74,6 +74,22 @@ Resources:
           Type: HttpApi
           Properties:
             Path: /create
+            Method: get
+            ApiId: !Ref ApiGateway
+            
+  MultipleAddress:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-CreateMultipleAddressFrontEnd
+      Description: Creates multiple address rows in table and redirects back to /
+      Handler: demo.CreateMultipleAddressFrontEnd
+      Policies: 
+        - !Ref SecretsPolicy
+      Events:
+        HelloWorld:
+          Type: HttpApi
+          Properties:
+            Path: /multiple
             Method: get
             ApiId: !Ref ApiGateway
             
@@ -146,8 +162,69 @@ Resources:
         MaximumEventAgeInSeconds: 3600
         MaximumRetryAttempts: 2
       Policies: 
-        - !Ref SecretsPolicy          
+        - !Ref SecretsPolicy
+        
+  SQSQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: !Sub ${AWS::StackName}-AuditLog
+            ReceiveMessageWaitTimeSeconds: 0
+            MessageRetentionPeriod: 86400
+            VisibilityTimeout: 30
+  
+  SendToSQS:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ForwardEventToSQS
+      Description: Lambda that will forward payload to SQS Queue
+      Handler: index.handler
+      Runtime: nodejs18.x
+      MemorySize: 512
+      Timeout: 5
+      Environment:
+        Variables:
+          SQS_QUEUE_URL: !Ref SQSQueue
+          # Don't need to set anything for this lambda other than above
+          JAVA_TOOL_OPTIONS: !Ref AWS::NoValue
+          DB_MASTER_SECRET_ARN: !Ref AWS::NoValue
+          DB_ENDPOINT: !Ref AWS::NoValue
+          DB_NAME: !Ref AWS::NoValue
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 3600
+        MaximumRetryAttempts: 2
+      Policies:
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt SQSQueue.QueueName
+      InlineCode: |
+        const { SQSClient , SendMessageCommand } = require("@aws-sdk/client-sqs");
+        const client = new SQSClient();
+        const sqs_queue = process.env.SQS_QUEUE_URL
+        exports.handler = async function(event, context) {
+            const params = {
+                MessageBody: JSON.stringify(event),
+                QueueUrl: sqs_queue
+            };
+            const response = await client.send(new SendMessageCommand(params));
+            console.log("Success, message sent. MessageID:", response.MessageId);
+            return { status : 'OK' };
+        };
             
+  PostgresAuditLogTriggerSQS:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: PostgresAuditLogTriggerSQS
+      Description: Lambda that will fire when changes are made to tables for audit logging
+      Handler: demo.PostgresAuditLogTriggerSQS
+      Policies: 
+        - !Ref SecretsPolicy
+      Events:
+        SQSQueue:
+          Type: SQS
+          Properties:
+            BatchSize: 1
+            Queue: !GetAtt SQSQueue.Arn
+            ScalingConfig:
+                MaximumConcurrency: 2
    
   DBInitialization:
     Type: AWS::Serverless::Function

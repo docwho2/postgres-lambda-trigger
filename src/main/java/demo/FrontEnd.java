@@ -36,7 +36,8 @@ public class FrontEnd implements RequestHandler<APIGatewayProxyRequestEvent, API
             final var sb = renderHTMLStart();
             
             sb.append("<h3>Postgres Java Lambda Trigger Demo</h3>");
-            sb.append("<a href=\"/create\" class=\"btn btn-primary\" role=\"button\">Add Row to Address Table</a>\n");
+            sb.append("<a href=\"/create\" class=\"btn btn-primary\" role=\"button\">Add Row to Address</a>\n");
+            sb.append("<a href=\"/multiple\" class=\"btn btn-primary\" role=\"button\">Add 5 Rows to Address</a>\n");
             sb.append("<a href=\"/delete\" class=\"btn btn-warning\" role=\"button\">Delete Last Address</a>\n");
             sb.append("<a href=\"javascript:location.reload()\" class=\"btn btn-primary\" role=\"button\">Refresh</a>\n");
             sb.append("<a href=\"/audit\" class=\"btn btn-warning pull-right\" role=\"button\">Clear Audit Log</a>\n");

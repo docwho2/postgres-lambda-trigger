@@ -52,13 +52,13 @@ public class CloudFormationCustomResource extends AbstractCustomResourceHandler 
             }
 
             // Just Insert One address to kick things off
-            var result = dsl.insertInto(DSL.table(DSL.name("address")))
+            dsl.insertInto(DSL.table(DSL.name("address")))
                     .set(DSL.field("address_1"), "200 N Main St")
                     .set(DSL.field("city"), "Wahkon")
                     .set(DSL.field("district"), "MN")
                     .set(DSL.field("address_notes"), "Mugg's of Mille Lacs")
                     .execute();
-            log.debug("Insert result for address = " + result);
+            
 
         } catch (Exception e) {
             log.error("Could Not Process SQL Files", e);
