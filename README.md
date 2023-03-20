@@ -8,7 +8,7 @@ Why even use this feature?  If you have many code bases that are writing data to
 
 Things to consider:
 - If you fire off lambdas for row updates that themselves update the DB then you can quickly exaust connection and lambda resources.  If you update 1000 rows then you could have hundreds of lambdas fire and connect to the DB bringing everything to a grinding halt.  Therefore you should set [concurrency limits](https://aws.amazon.com/blogs/compute/managing-aws-lambda-function-concurrency/) on these lambda functions in most cases.
-- When you exceed the limit, you get a throttle on the lambda, and these will delay processing.  In some cases this OK, in the Geo coding use case we don't need the Geo coding to complete immediately, so it's OK.  In testing 1K+ row updates for Geo coding some row updates took over 1 minute to complete because of the retry back off.
+- When you exceed the limit, you get a throttle on the lambda, and these will delay processing.  In some cases this is fine.  In the Geo coding use case we don't need the Geo coding to complete immediately, so it's OK.  In testing 1K+ row updates for Geo coding some row updates took over 1 minute to complete because of the retry back off.
 - If you need smoother execution of the events, then consider using a simple NodeJS Lambda (that won't be throttled) that takes the event payload and puts it on a SQS queue that another Lambda will process from the queue.  See a NodeJS example of this in the [ForwardToSQS.js](ForwardToSQS.js) file.
 
 Three use cases are covered in this demo:
@@ -16,12 +16,12 @@ Three use cases are covered in this demo:
 - A Lambda ([PostgresAuditLogTrigger.java](src/main/java/demo/PostgresAuditLogTrigger.java)) that will simply log all actions on the address table to an audit_log table.  As shown in some AWS examples, you could then simply put the payload onto a SNS Topic or SQS Queue for downline processing.
 - A Lambda ([PostgresAuditLogTriggerSQS.java](src/main/java/demo/PostgresAuditLogTriggerSQS.java)) that will simply log all actions on the address table to an audit_log_sqs table.  This shows how to process the same event above from a SQS Queue.
 
-Another goal of the project was to demonstrate:
+Other goals of the project:
 - SAM CloudFormation example for all the components in play (`sam build` and then `sam deploy`) for simple deployment of the project.
 - Managed RDS Secret for connecting to the DB and use of the [AWS JDBC Driver](https://docs.aws.amazon.com/secretsmanager/latest/userguide/retrieving-secrets_jdbc.html).
 - [Custom Resource](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html) to initialize the DB after creation ([CloudFormationCustomResource.java](src/main/java/demo/CloudFormationCustomResource.java)).  Namely to enable the lambda extensions and create all the SQL resources necessary in Postgres.
 - Nested Stacks.
-- To simply provide a full working example with Java and AWS RDS Postgres (what I use day to day).  The AWS Demo is MySQL with Node and there was nothing I could find that really showed a full use case in Java.
+- To simply provide a full working example with Java and AWS RDS Postgres (what I use day to day).  The Demo on the AWS Website is MySQL with NodeJS and there was nothing I could find that really showed a full use case in Java.
 
 
 ## Contents
@@ -32,9 +32,8 @@ This project contains source code and supporting files for a serverless applicat
 - CloudFormation scripts for all AWS resources
 	- [vpc.yaml](vpc.yaml) - Creates simple VPC with 2 public subnets
 	- [postgres.yaml](postgres.yaml) - Creates Auora Postgres Cluster with single serverlessV2 node and permissions to execute lambda functions.
-	- [template.yaml](template.yaml) - Creates all the lambda functions
+	- [template.yaml](template.yaml) - Creates all the SAM lambda functions and associated AWS resources.
 
-The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project.
 
 ## Deploy the Demo
 
