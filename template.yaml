@@ -177,7 +177,7 @@ Resources:
     Properties:
       FunctionName: ForwardEventToSQS
       Description: Lambda that will forward payload to SQS Queue
-      Handler: index.handler
+      Handler: ForwardToSQS.handler
       Runtime: nodejs18.x
       MemorySize: 512
       Timeout: 5
@@ -194,20 +194,7 @@ Resources:
         MaximumRetryAttempts: 2
       Policies:
         - SQSSendMessagePolicy:
-            QueueName: !GetAtt SQSQueue.QueueName    
-      InlineCode: |
-        const { SQSClient , SendMessageCommand } = require("@aws-sdk/client-sqs");
-        const client = new SQSClient();
-        const sqs_queue = process.env.SQS_QUEUE_URL
-        exports.handler = async function(event, context) {
-            const params = {
-                MessageBody: JSON.stringify(event),
-                QueueUrl: sqs_queue
-            };
-            const response = await client.send(new SendMessageCommand(params));
-            console.log("Success, message sent. MessageID:", response.MessageId);
-            return { status : 'OK' };
-        };
+            QueueName: !GetAtt SQSQueue.QueueName
             
   PostgresAuditLogTriggerSQS:
     Type: AWS::Serverless::Function
