@@ -195,6 +195,7 @@ Resources:
       Policies:
         - SQSSendMessagePolicy:
             QueueName: !GetAtt SQSQueue.QueueName
+      ## inlinecode      
       InlineCode: |
         const { SQSClient , SendMessageCommand } = require("@aws-sdk/client-sqs");
         const client = new SQSClient();
