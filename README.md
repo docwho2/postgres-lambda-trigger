@@ -38,7 +38,7 @@ The application uses several AWS resources, including Lambda functions and an AP
 
 ## Deploy the Demo
 
-The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.
+The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.  Before proceeding, it is assumed you have valid AWS credentials setup with the AWS CLI and permissions to perform CloudFormation stack operations.
 
 To use the SAM CLI, you need the following tools.
 
@@ -69,13 +69,13 @@ You can find the API Gateway Endpoint URL in the output values displayed after d
 
 ![Demo User Interface](UI.png)
 
-When you open the API GW Endpoint URL in your browser you will see the above UI.  When the DB initializes, one address row is inserted for you, so you should see 1 row with an address Geo encoded and 2 entries in the `audit_log` table.  The UI displays all the rows in both `address` and `audit_log` tables.  There are four actions to perform in the demo:
+When you open the API GW Endpoint URL in your browser you will see the above UI.  When the DB initializes, one address row is inserted for you, so you should see 1 row with an address Geo encoded and 2 entries in the `audit_log` tables.  The UI displays all the rows in both `address` and `audit_log` tables.  There are four actions to perform in the demo:
 
 - Add Row to Address Table - This adds Apple's HQ address to the table.  Normally after the refresh you would see the row without geo encoding.  If you then hit `Refresh`, you should see the Geo data populated into the row.
 - Add 5 Rows to Address Table - This adds 5 different addresses to the table.  Normally after the refresh you would see the rows without geo encoding.  If you then hit `Refresh`, you should see the Geo data populated into the rows.  Due to throttling this last one might be delayed a little.
-- Delete Last Address - This deletes the last address row from the `address` table.  You should see the last row go aways and an `audit_log` row for the delete action.
+- Delete Last Address - This deletes the last address row from the `address` table.  You should see the last row go away and an `audit_log` row for the delete action.
 - Refresh - Does a simple refresh of the page (which reads all the tables again)
-- Clear Audit Log - Truncates the `audit_log` table.
+- Clear Audit Log - Truncates the `audit_log` tables.
 
 ## Fetch, tail, and filter Lambda function logs
 
