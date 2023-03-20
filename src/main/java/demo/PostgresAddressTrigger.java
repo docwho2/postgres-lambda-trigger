@@ -92,7 +92,7 @@ public class PostgresAddressTrigger extends PostgresAbstractTrigger {
 
             try {
                 // Introduce slight delay for demo so you always see blank row on submission in UI
-                Thread.sleep(750);
+                Thread.sleep(1000);
             } catch (InterruptedException ie) {
             }
 
