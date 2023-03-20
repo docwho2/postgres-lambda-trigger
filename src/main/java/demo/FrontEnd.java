@@ -56,7 +56,7 @@ public class FrontEnd implements RequestHandler<APIGatewayProxyRequestEvent, API
                 // Kick out each table
                 for(var table : tables) {
                     sb.append(appendPanelStart("Table [" + table + "]"));
-                    sb.append(dsl.select().from(table).fetch().formatHTML()
+                    sb.append(dsl.select().from(table).orderBy(DSL.field("id").desc()).fetch().formatHTML()
                     .replace("<table>", "<table class=\"table table-striped table-bordered\" width=\"100%\">\n"));
                     sb.append(appendPanelEnd());
                 }
