@@ -90,13 +90,7 @@ public class PostgresAddressTrigger extends PostgresAbstractTrigger {
             // Take the response and create a serializable version that we can later convert to JSON
             var last_coding = mapper.convertValue(response.toBuilder(), SearchPlaceIndexForTextResponse.serializableBuilderClass());
 
-            try {
-                // Introduce slight delay for demo so you always see blank row on submission in UI
-                Thread.sleep(1000);
-            } catch (InterruptedException ie) {
-            }
-
-            dsl.update(DSL.table("address"))
+            var statement = dsl.update(DSL.table("address"))
                     // Make sure we set this to false so we don't trigger ourselves again
                     .set(DSL.field("requires_geo_coding", Boolean.class), false)
                     .set(DSL.field("address_formatted"), place.label())
@@ -104,8 +98,23 @@ public class PostgresAddressTrigger extends PostgresAbstractTrigger {
                     .set(DSL.field("geo_longitude", Double.class), place.geometry().point().get(0))
                     .set(DSL.field("geo_latitude", Double.class), place.geometry().point().get(1))
                     .set(DSL.field("geo_last_coding", JSONB.class), JSONB.jsonb(mapper.valueToTree(last_coding).toString()))
-                    .where(DSL.field("id", Integer.class).eq(addr.findValue("id").asInt()))
-                    .execute();
+                    .where(DSL.field("id", Integer.class).eq(addr.findValue("id").asInt()));
+
+            int updated = 0;
+            int counter = 0;
+            while (updated == 0) {
+                updated = statement.execute();
+                if (updated == 0) {
+                    // Sleep a little since row did not update
+                    try {
+                        var sleep = ++counter * 100;
+                        log.debug("Sleeping " + sleep + " ms due to insert not finding row yet");
+                        Thread.sleep(sleep);
+                    } catch (InterruptedException ie) {
+
+                    }
+                }
+            }
 
         } else {
             log.info("Places query returned no results");
