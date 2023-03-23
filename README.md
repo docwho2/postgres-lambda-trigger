@@ -96,3 +96,249 @@ To delete the demo, use the SAM CLI. `DO NOT FORGET TO RUN THIS OR YOU WILL CONT
 java-postgres-lambda-trigger$ sam delete
 ```
 
+## Output from deploying
+```bash
+sam deploy
+
+		Managed S3 bucket: aws-sam-cli-managed-default-samclisourcebucket-13mtysy565mpu
+		A different default S3 bucket can be set in samconfig.toml
+		Or by specifying --s3-bucket explicitly.
+File with same data already exists at 118b7556e1cd744803277e0663e0ed67.template, skipping upload
+	Uploading to 010fb9709bddad387f7bb52fcb951137.template  3231 / 3231  (100.00%)
+	Uploading to c40eaf68c93cc685332b62684f40581e  15662376 / 15662376  (100.00%)
+File with same data already exists at c40eaf68c93cc685332b62684f40581e, skipping upload
+File with same data already exists at c40eaf68c93cc685332b62684f40581e, skipping upload
+File with same data already exists at c40eaf68c93cc685332b62684f40581e, skipping upload
+File with same data already exists at c40eaf68c93cc685332b62684f40581e, skipping upload
+File with same data already exists at c40eaf68c93cc685332b62684f40581e, skipping upload
+File with same data already exists at c40eaf68c93cc685332b62684f40581e, skipping upload
+	Uploading to d3853c519bc91a008dfe389fee6d07be  13999391 / 13999391  (100.00%)
+File with same data already exists at c40eaf68c93cc685332b62684f40581e, skipping upload
+File with same data already exists at c40eaf68c93cc685332b62684f40581e, skipping upload
+
+	Deploying with following values
+	===============================
+	Stack name                   : postgres-lambda-trigger
+	Region                       : us-east-1
+	Confirm changeset            : True
+	Disable rollback             : False
+	Deployment s3 bucket         : aws-sam-cli-managed-default-samclisourcebucket-13mtysy565mpu
+	Capabilities                 : ["CAPABILITY_IAM"]
+	Parameter overrides          : {}
+	Signing Profiles             : {}
+
+Initiating deployment
+=====================
+
+	Uploading to ea29b7c6462387e6ec53070650e2ffbf.template  10410 / 10410  (100.00%)
+
+
+Waiting for changeset to be created..
+
+CloudFormation stack changeset
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Operation                                 LogicalResourceId                         ResourceType                              Replacement                             
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Add                                     ApiGatewayApiGatewayDefaultStage          AWS::ApiGatewayV2::Stage                  N/A                                     
++ Add                                     ApiGateway                                AWS::ApiGatewayV2::Api                    N/A                                     
++ Add                                     CreateAddressHelloWorldPermission         AWS::Lambda::Permission                   N/A                                     
++ Add                                     CreateAddressRole                         AWS::IAM::Role                            N/A                                     
++ Add                                     CreateAddress                             AWS::Lambda::Function                     N/A                                     
++ Add                                     DBCustom                                  Custom::DBInitialization                  N/A                                     
++ Add                                     DBInitializationEventInvokeConfig         AWS::Lambda::EventInvokeConfig            N/A                                     
++ Add                                     DBInitializationRole                      AWS::IAM::Role                            N/A                                     
++ Add                                     DBInitialization                          AWS::Lambda::Function                     N/A                                     
++ Add                                     DeleteAddressHelloWorldPermission         AWS::Lambda::Permission                   N/A                                     
++ Add                                     DeleteAddressRole                         AWS::IAM::Role                            N/A                                     
++ Add                                     DeleteAddress                             AWS::Lambda::Function                     N/A                                     
++ Add                                     DeleteAuditLogHelloWorldPermission        AWS::Lambda::Permission                   N/A                                     
++ Add                                     DeleteAuditLogRole                        AWS::IAM::Role                            N/A                                     
++ Add                                     DeleteAuditLog                            AWS::Lambda::Function                     N/A                                     
++ Add                                     FrontEndHelloWorldPermission              AWS::Lambda::Permission                   N/A                                     
++ Add                                     FrontEndRole                              AWS::IAM::Role                            N/A                                     
++ Add                                     FrontEnd                                  AWS::Lambda::Function                     N/A                                     
++ Add                                     GeoCodingPolicy                           AWS::IAM::ManagedPolicy                   N/A                                     
++ Add                                     MultipleAddressHelloWorldPermission       AWS::Lambda::Permission                   N/A                                     
++ Add                                     MultipleAddressRole                       AWS::IAM::Role                            N/A                                     
++ Add                                     MultipleAddress                           AWS::Lambda::Function                     N/A                                     
++ Add                                     PlaceIndex                                AWS::Location::PlaceIndex                 N/A                                     
++ Add                                     PostgresAddressTriggerEventInvokeConfig   AWS::Lambda::EventInvokeConfig            N/A                                     
++ Add                                     PostgresAddressTriggerRole                AWS::IAM::Role                            N/A                                     
++ Add                                     PostgresAddressTrigger                    AWS::Lambda::Function                     N/A                                     
++ Add                                     PostgresAuditLogTriggerEventInvokeConfi   AWS::Lambda::EventInvokeConfig            N/A                                     
+                                          g                                                                                                                           
++ Add                                     PostgresAuditLogTriggerRole               AWS::IAM::Role                            N/A                                     
++ Add                                     PostgresAuditLogTriggerSQSRole            AWS::IAM::Role                            N/A                                     
++ Add                                     PostgresAuditLogTriggerSQSSQSQueue        AWS::Lambda::EventSourceMapping           N/A                                     
++ Add                                     PostgresAuditLogTriggerSQS                AWS::Lambda::Function                     N/A                                     
++ Add                                     PostgresAuditLogTrigger                   AWS::Lambda::Function                     N/A                                     
++ Add                                     RDSStack                                  AWS::CloudFormation::Stack                N/A                                     
++ Add                                     SQSQueue                                  AWS::SQS::Queue                           N/A                                     
++ Add                                     SecretsPolicy                             AWS::IAM::ManagedPolicy                   N/A                                     
++ Add                                     SendToSQSEventInvokeConfig                AWS::Lambda::EventInvokeConfig            N/A                                     
++ Add                                     SendToSQSRole                             AWS::IAM::Role                            N/A                                     
++ Add                                     SendToSQS                                 AWS::Lambda::Function                     N/A                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Changeset created successfully. arn:aws:cloudformation:us-east-1:364253738352:changeSet/samcli-deploy1679564646/e3451f71-d284-4784-b2de-665d79804510
+
+
+Previewing CloudFormation changeset before deployment
+======================================================
+Deploy this changeset? [y/N]: y
+
+2023-03-23 04:44:19 - Waiting for stack create/update to complete
+
+CloudFormation events from stack operations (refresh every 0.5 seconds)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ResourceStatus                            ResourceType                              LogicalResourceId                         ResourceStatusReason                    
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE_IN_PROGRESS                        AWS::CloudFormation::Stack                RDSStack                                  -                                       
+CREATE_IN_PROGRESS                        AWS::SQS::Queue                           SQSQueue                                  -                                       
+CREATE_IN_PROGRESS                        AWS::Location::PlaceIndex                 PlaceIndex                                -                                       
+CREATE_IN_PROGRESS                        AWS::CloudFormation::Stack                RDSStack                                  Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::SQS::Queue                           SQSQueue                                  Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Location::PlaceIndex                 PlaceIndex                                Resource creation Initiated             
+CREATE_COMPLETE                           AWS::Location::PlaceIndex                 PlaceIndex                                -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::ManagedPolicy                   GeoCodingPolicy                           -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::ManagedPolicy                   GeoCodingPolicy                           Resource creation Initiated             
+CREATE_COMPLETE                           AWS::IAM::ManagedPolicy                   GeoCodingPolicy                           -                                       
+CREATE_COMPLETE                           AWS::SQS::Queue                           SQSQueue                                  -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            SendToSQSRole                             -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            SendToSQSRole                             Resource creation Initiated             
+CREATE_COMPLETE                           AWS::IAM::Role                            SendToSQSRole                             -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     SendToSQS                                 -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     SendToSQS                                 Resource creation Initiated             
+CREATE_COMPLETE                           AWS::Lambda::Function                     SendToSQS                                 -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::EventInvokeConfig            SendToSQSEventInvokeConfig                -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::EventInvokeConfig            SendToSQSEventInvokeConfig                Resource creation Initiated             
+CREATE_COMPLETE                           AWS::Lambda::EventInvokeConfig            SendToSQSEventInvokeConfig                -                                       
+CREATE_COMPLETE                           AWS::CloudFormation::Stack                RDSStack                                  -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::ManagedPolicy                   SecretsPolicy                             -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::ManagedPolicy                   SecretsPolicy                             Resource creation Initiated             
+CREATE_COMPLETE                           AWS::IAM::ManagedPolicy                   SecretsPolicy                             -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            DBInitializationRole                      -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            PostgresAuditLogTriggerSQSRole            -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            CreateAddressRole                         -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            MultipleAddressRole                       -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            DeleteAuditLogRole                        -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            PostgresAuditLogTriggerRole               -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            DBInitializationRole                      Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            DeleteAddressRole                         -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            FrontEndRole                              -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            PostgresAuditLogTriggerSQSRole            Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            MultipleAddressRole                       Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            CreateAddressRole                         Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            DeleteAuditLogRole                        Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            PostgresAuditLogTriggerRole               Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            FrontEndRole                              Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            PostgresAddressTriggerRole                -                                       
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            DeleteAddressRole                         Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::IAM::Role                            PostgresAddressTriggerRole                Resource creation Initiated             
+CREATE_COMPLETE                           AWS::IAM::Role                            MultipleAddressRole                       -                                       
+CREATE_COMPLETE                           AWS::IAM::Role                            DBInitializationRole                      -                                       
+CREATE_COMPLETE                           AWS::IAM::Role                            DeleteAuditLogRole                        -                                       
+CREATE_COMPLETE                           AWS::IAM::Role                            PostgresAuditLogTriggerSQSRole            -                                       
+CREATE_COMPLETE                           AWS::IAM::Role                            PostgresAuditLogTriggerRole               -                                       
+CREATE_COMPLETE                           AWS::IAM::Role                            FrontEndRole                              -                                       
+CREATE_COMPLETE                           AWS::IAM::Role                            DeleteAddressRole                         -                                       
+CREATE_COMPLETE                           AWS::IAM::Role                            PostgresAddressTriggerRole                -                                       
+CREATE_COMPLETE                           AWS::IAM::Role                            CreateAddressRole                         -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     DeleteAuditLog                            -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     DBInitialization                          -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     FrontEnd                                  -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     MultipleAddress                           -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     PostgresAuditLogTriggerSQS                -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     PostgresAuditLogTrigger                   -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     DeleteAddress                             -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     PostgresAddressTrigger                    -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     CreateAddress                             -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     DeleteAuditLog                            Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     MultipleAddress                           Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     FrontEnd                                  Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     PostgresAuditLogTriggerSQS                Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     PostgresAddressTrigger                    Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     DBInitialization                          Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     PostgresAuditLogTrigger                   Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     CreateAddress                             Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Function                     DeleteAddress                             Resource creation Initiated             
+CREATE_COMPLETE                           AWS::Lambda::Function                     DeleteAuditLog                            -                                       
+CREATE_COMPLETE                           AWS::Lambda::Function                     FrontEnd                                  -                                       
+CREATE_COMPLETE                           AWS::Lambda::Function                     MultipleAddress                           -                                       
+CREATE_COMPLETE                           AWS::Lambda::Function                     DBInitialization                          -                                       
+CREATE_COMPLETE                           AWS::Lambda::Function                     CreateAddress                             -                                       
+CREATE_COMPLETE                           AWS::Lambda::Function                     PostgresAddressTrigger                    -                                       
+CREATE_COMPLETE                           AWS::Lambda::Function                     PostgresAuditLogTrigger                   -                                       
+CREATE_COMPLETE                           AWS::Lambda::Function                     DeleteAddress                             -                                       
+CREATE_COMPLETE                           AWS::Lambda::Function                     PostgresAuditLogTriggerSQS                -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::EventInvokeConfig            DBInitializationEventInvokeConfig         -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::EventInvokeConfig            PostgresAddressTriggerEventInvokeConfig   -                                       
+CREATE_IN_PROGRESS                        Custom::DBInitialization                  DBCustom                                  -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::EventInvokeConfig            PostgresAuditLogTriggerEventInvokeConfi   -                                       
+                                                                                    g                                                                                 
+CREATE_IN_PROGRESS                        AWS::Lambda::EventSourceMapping           PostgresAuditLogTriggerSQSSQSQueue        -                                       
+CREATE_IN_PROGRESS                        AWS::ApiGatewayV2::Api                    ApiGateway                                -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::EventInvokeConfig            DBInitializationEventInvokeConfig         Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::EventInvokeConfig            PostgresAddressTriggerEventInvokeConfig   Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::EventInvokeConfig            PostgresAuditLogTriggerEventInvokeConfi   Resource creation Initiated             
+                                                                                    g                                                                                 
+CREATE_COMPLETE                           AWS::Lambda::EventInvokeConfig            PostgresAddressTriggerEventInvokeConfig   -                                       
+CREATE_COMPLETE                           AWS::Lambda::EventInvokeConfig            DBInitializationEventInvokeConfig         -                                       
+CREATE_COMPLETE                           AWS::Lambda::EventInvokeConfig            PostgresAuditLogTriggerEventInvokeConfi   -                                       
+                                                                                    g                                                                                 
+CREATE_IN_PROGRESS                        AWS::Lambda::EventSourceMapping           PostgresAuditLogTriggerSQSSQSQueue        Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::ApiGatewayV2::Api                    ApiGateway                                Resource creation Initiated             
+CREATE_COMPLETE                           AWS::ApiGatewayV2::Api                    ApiGateway                                -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   DeleteAddressHelloWorldPermission         -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   CreateAddressHelloWorldPermission         -                                       
+CREATE_IN_PROGRESS                        AWS::ApiGatewayV2::Stage                  ApiGatewayApiGatewayDefaultStage          -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   MultipleAddressHelloWorldPermission       -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   DeleteAuditLogHelloWorldPermission        -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   FrontEndHelloWorldPermission              -                                       
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   DeleteAddressHelloWorldPermission         Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   DeleteAuditLogHelloWorldPermission        Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   MultipleAddressHelloWorldPermission       Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   FrontEndHelloWorldPermission              Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::Lambda::Permission                   CreateAddressHelloWorldPermission         Resource creation Initiated             
+CREATE_IN_PROGRESS                        AWS::ApiGatewayV2::Stage                  ApiGatewayApiGatewayDefaultStage          Resource creation Initiated             
+CREATE_COMPLETE                           AWS::ApiGatewayV2::Stage                  ApiGatewayApiGatewayDefaultStage          -                                       
+CREATE_IN_PROGRESS                        Custom::DBInitialization                  DBCustom                                  Resource creation Initiated             
+CREATE_COMPLETE                           Custom::DBInitialization                  DBCustom                                  -                                       
+CREATE_COMPLETE                           AWS::Lambda::Permission                   DeleteAddressHelloWorldPermission         -                                       
+CREATE_COMPLETE                           AWS::Lambda::Permission                   CreateAddressHelloWorldPermission         -                                       
+CREATE_COMPLETE                           AWS::Lambda::Permission                   FrontEndHelloWorldPermission              -                                       
+CREATE_COMPLETE                           AWS::Lambda::Permission                   DeleteAuditLogHelloWorldPermission        -                                       
+CREATE_COMPLETE                           AWS::Lambda::Permission                   MultipleAddressHelloWorldPermission       -                                       
+CREATE_COMPLETE                           AWS::Lambda::EventSourceMapping           PostgresAuditLogTriggerSQSSQSQueue        -                                       
+CREATE_COMPLETE                           AWS::CloudFormation::Stack                postgres-lambda-trigger                   -                                       
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CloudFormation outputs from deployed stack
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Outputs                                                                                                                                                               
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Key                 DBName                                                                                                                                            
+Description         DB Name                                                                                                                                           
+Value               demo                                                                                                                                              
+
+Key                 ApiEndpoint                                                                                                                                       
+Description         API Gateway endpoint URL, Open Browser to this to see demo                                                                                        
+Value               https://2h5pzz1g9b.execute-api.us-east-1.amazonaws.com                                                                                            
+
+Key                 DBEndpoint                                                                                                                                        
+Description         DB Endpoint                                                                                                                                       
+Value               postgres-lambda-trigger-rdssta-serverlessv2cluster-tpbn5iezfclk.cluster-cmkcbj80dwz4.us-east-1.rds.amazonaws.com                                  
+
+Key                 DBURL                                                                                                                                             
+Description         JDBC Connection URL                                                                                                                               
+Value               jdbc:postgresql://postgres-lambda-trigger-rdssta-serverlessv2cluster-tpbn5iezfclk.cluster-cmkcbj80dwz4.us-east-1.rds.amazonaws.com/demo           
+
+Key                 DBUsername                                                                                                                                        
+Description         DB Username                                                                                                                                       
+Value               master                                                                                                                                            
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Successfully created/updated stack - postgres-lambda-trigger in us-east-1
+```
