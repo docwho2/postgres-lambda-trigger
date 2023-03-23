@@ -96,9 +96,9 @@ To delete the demo, use the SAM CLI. `DO NOT FORGET TO RUN THIS OR YOU WILL CONT
 java-postgres-lambda-trigger$ sam delete
 ```
 
-## Output from deploying
+## Sample Deploy Output
 ```bash
-sam deploy
+java-postgres-lambda-trigger$ sam deploy
 
 		Managed S3 bucket: aws-sam-cli-managed-default-samclisourcebucket-13mtysy565mpu
 		A different default S3 bucket can be set in samconfig.toml
@@ -181,7 +181,7 @@ Operation                                 LogicalResourceId                     
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-Changeset created successfully. arn:aws:cloudformation:us-east-1:364253738352:changeSet/samcli-deploy1679564646/e3451f71-d284-4784-b2de-665d79804510
+Changeset created successfully. arn:aws:cloudformation:us-east-1::changeSet/samcli-deploy1679564646/e3451f71-d284-4784-b2de-665d79804510
 
 
 Previewing CloudFormation changeset before deployment
