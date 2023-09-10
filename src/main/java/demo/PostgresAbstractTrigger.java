@@ -27,8 +27,6 @@ public abstract class PostgresAbstractTrigger implements RequestStreamHandler {
 
     final Logger log = LogManager.getLogger();
 
-    final static DSLContext dsl = PostgresDataSource.getDSL();
-
     final static ObjectMapper mapper = new ObjectMapper();
 
     @Override

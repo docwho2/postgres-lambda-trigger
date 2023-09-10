@@ -36,6 +36,7 @@ public class PostgresAuditLogTrigger extends PostgresAbstractTrigger {
     protected void processEvent(TG_OP operation, String table_name, JsonNode old_record, JsonNode new_record) {
 
         // Just insert an Audit row for the operation
+        var dsl = PostgresDataSource.getDSL();
         dsl.insertInto(DSL.table(DSL.name("audit_log")))
                 .set(DSL.field("operation"), operation.toString())
                 .set(DSL.field("table_name"), table_name)

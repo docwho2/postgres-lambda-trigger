@@ -22,20 +22,23 @@ public abstract class AbstractActionFrontEnd implements RequestHandler<APIGatewa
     // Initialize the Log4j logger.
     Logger log = LogManager.getLogger();
 
-    final static DSLContext dsl = PostgresDataSource.getDSL();
 
     protected final static Table<Record> ADDRESS_TABLE = DSL.table("address");
+    
+    final static Map<String, String> headers = new HashMap<>();
+    
+    static {
+        headers.put("Cache-Control", "no-cache");
+
+        // Redirect back to main page
+        headers.put("Location", "/");
+    }
     
     protected abstract void performAction();
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
         log.debug(input);
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Cache-Control", "no-cache");
-
-        // Redirect back to main page
-        headers.put("Location", "/");
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent()
                 .withHeaders(headers)

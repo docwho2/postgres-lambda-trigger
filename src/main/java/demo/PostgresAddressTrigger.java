@@ -89,7 +89,7 @@ public class PostgresAddressTrigger extends PostgresAbstractTrigger {
 
             // Take the response and create a serializable version that we can later convert to JSON
             var last_coding = mapper.convertValue(response.toBuilder(), SearchPlaceIndexForTextResponse.serializableBuilderClass());
-
+            var dsl = PostgresDataSource.getDSL();
             var statement = dsl.update(DSL.table("address"))
                     // Make sure we set this to false so we don't trigger ourselves again
                     .set(DSL.field("requires_geo_coding", Boolean.class), false)

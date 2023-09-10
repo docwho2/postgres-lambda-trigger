@@ -23,10 +23,10 @@ Globals:
         DB_NAME: !Ref DBNAMEPARAM
     CodeUri: .
     Architectures:
-        - arm64
-    Runtime: java11
+        - x86_64
+    Runtime: java17
     Timeout: 30
-    MemorySize: 1024
+    MemorySize: 3009
 
 Resources:
   
@@ -51,6 +51,9 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-DemoFrontEnd
       Description: Displays Sample Postgres Table and allows Address Entry
       Handler: demo.FrontEnd
+      AutoPublishAlias: SNAPSTART
+      SnapStart:
+        ApplyOn: PublishedVersions
       Policies: 
         - !Ref SecretsPolicy
       Events:
@@ -67,6 +70,9 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-CreateAddressFrontEnd
       Description: Creates an address row in table and redirects back to /
       Handler: demo.CreateAddressFrontEnd
+      AutoPublishAlias: SNAPSTART
+      SnapStart:
+        ApplyOn: PublishedVersions
       Policies: 
         - !Ref SecretsPolicy
       Events:
@@ -83,6 +89,9 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-CreateMultipleAddressFrontEnd
       Description: Creates multiple address rows in table and redirects back to /
       Handler: demo.CreateMultipleAddressFrontEnd
+      AutoPublishAlias: SNAPSTART
+      SnapStart:
+        ApplyOn: PublishedVersions
       Policies: 
         - !Ref SecretsPolicy
       Events:
@@ -99,6 +108,9 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-DeleteAddressFrontEnd
       Description: Deletes an address row in table and redirects back to /
       Handler: demo.DeleteAddressFrontEnd
+      AutoPublishAlias: SNAPSTART
+      SnapStart:
+        ApplyOn: PublishedVersions
       Policies: 
         - !Ref SecretsPolicy
       Events:
@@ -115,6 +127,9 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-DeleteAuditLogFrontEnd
       Description: Clears the audit_log table and redirects back to /
       Handler: demo.DeleteAuditLogFrontEnd
+      AutoPublishAlias: SNAPSTART
+      SnapStart:
+        ApplyOn: PublishedVersions
       Policies: 
         - !Ref SecretsPolicy
       Events:

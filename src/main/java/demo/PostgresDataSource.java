@@ -35,10 +35,14 @@ public class PostgresDataSource {
     static final Properties info;
 
     static {
+        
+        System.setProperty("software.amazon.awssdk.http.service.impl", 
+                "software.amazon.awssdk.http.urlconnection.UrlConnectionSdkHttpService");
+
         System.out.println("Secrets ARN is " + SECRET_ARN);
         // Load the JDBC driver
-        new AWSSecretsManagerPostgreSQLDriver();
-
+        var driver = new AWSSecretsManagerPostgreSQLDriver();
+        System.out.println("Driver initialzied " + driver);
         info = new Properties();
         info.put("user", SECRET_ARN);
     }

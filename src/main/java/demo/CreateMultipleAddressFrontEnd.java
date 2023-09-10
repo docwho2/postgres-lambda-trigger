@@ -10,6 +10,7 @@ public class CreateMultipleAddressFrontEnd extends AbstractActionFrontEnd {
     @Override
     protected void performAction() {
         // Insert 5 addresses in one transaction so they all hit at once
+        var dsl = PostgresDataSource.getDSL();
         dsl.transaction((configuration) -> {
             var dslT = configuration.dsl();
             dslT.insertInto(ADDRESS_TABLE)

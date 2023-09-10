@@ -20,15 +20,17 @@ public class FrontEnd implements RequestHandler<APIGatewayProxyRequestEvent, API
      // Initialize the Log4j logger.
     Logger log = LogManager.getLogger();
     
-    final static DSLContext dsl = PostgresDataSource.getDSL();
+    final static Map<String, String> headers = new HashMap<>();
+    
+    static {
+         headers.put("Content-Type", "text/html");
+    }
+    
     
     @Override
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
         log.debug(input);
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "text/html");
-        //headers.put("X-Custom-Header", "application/json");
-
+        var dsl = PostgresDataSource.getDSL();
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent()
                 .withHeaders(headers);
         
