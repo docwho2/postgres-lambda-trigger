@@ -36,7 +36,7 @@ jobs:
     - name: Build inside Docker containers
       run: sam build --use-container
       
-    - name: Prevent prompts and failure when the stack is unchanged
-      run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+    #- name: Prevent prompts and failure when the stack is unchanged
+    #  run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
 
 
