@@ -20,7 +20,7 @@ public class FrontEnd implements RequestHandler<APIGatewayProxyRequestEvent, API
      // Initialize the Log4j logger.
     Logger log = LogManager.getLogger();
     
-    final static Map<String, String> headers = new HashMap<>();
+    final static Map<String, String> headers = new HashMap<>()
     
     static {
          headers.put("Content-Type", "text/html");
