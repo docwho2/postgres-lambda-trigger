@@ -1,5 +1,5 @@
 
-name: Java CI with AWS SAM
+name: Build AWS SAM Container
 
 on:
   push:
@@ -7,13 +7,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  id-token: write # This is required for requesting the JWT
-  contents: read  # This is required for actions/checkout
 
 jobs:
   build:
-
+    environment: build
     runs-on: ubuntu-latest
 
     steps:
@@ -30,13 +27,5 @@ jobs:
     - name: Build inside Docker containers
       run: sam build --use-container
     
-    #- name: Setup AWS Creds
-    #  uses: aws-actions/configure-aws-credentials@v4
-    #  with:
-    #    aws-region: us-east-1
-    #    role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-      
-    #- name: Prevent prompts and failure when the stack is unchanged
-    #  run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
 
 
