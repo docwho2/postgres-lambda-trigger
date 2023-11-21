@@ -64,6 +64,14 @@ Resources:
             Method: get
             ApiId: !Ref ApiGateway
             
+  FrontEndLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${FrontEnd}'
+      RetentionInDays: 90
+            
   CreateAddress:
     Type: AWS::Serverless::Function
     Properties:
@@ -82,6 +90,14 @@ Resources:
             Path: /create
             Method: get
             ApiId: !Ref ApiGateway
+  
+  CreateAddressLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${CreateAddress}'
+      RetentionInDays: 90
             
   MultipleAddress:
     Type: AWS::Serverless::Function
@@ -101,6 +117,14 @@ Resources:
             Path: /multiple
             Method: get
             ApiId: !Ref ApiGateway
+  
+  MultipleAddressLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${MultipleAddress}'
+      RetentionInDays: 90          
             
   DeleteAddress:
     Type: AWS::Serverless::Function
@@ -121,6 +145,14 @@ Resources:
             Method: get
             ApiId: !Ref ApiGateway
             
+  DeleteAddressLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${DeleteAddress}'
+      RetentionInDays: 90             
+            
   DeleteAuditLog:
     Type: AWS::Serverless::Function
     Properties:
@@ -139,6 +171,15 @@ Resources:
             Path: /audit
             Method: get
             ApiId: !Ref ApiGateway
+  
+  DeleteAuditLogLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${DeleteAuditLog}'
+      RetentionInDays: 90
+    
     
   PostgresAddressTrigger:
     Type: AWS::Serverless::Function
@@ -156,6 +197,14 @@ Resources:
       Policies: 
         - !Ref SecretsPolicy
         - !Ref GeoCodingPolicy 
+  
+  PostgresAddressTriggerLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${PostgresAddressTrigger}'
+      RetentionInDays: 90       
         
   PlaceIndex:
         Type: AWS::Location::PlaceIndex
@@ -178,6 +227,14 @@ Resources:
         MaximumRetryAttempts: 2
       Policies: 
         - !Ref SecretsPolicy
+        
+  PostgresAuditLogTriggerLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${PostgresAuditLogTrigger}'
+      RetentionInDays: 90     
         
   SQSQueue:
         Type: AWS::SQS::Queue
@@ -210,6 +267,14 @@ Resources:
       Policies:
         - SQSSendMessagePolicy:
             QueueName: !GetAtt SQSQueue.QueueName
+  
+  SendToSQSLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${SendToSQS}'
+      RetentionInDays: 90  
             
   PostgresAuditLogTriggerSQS:
     Type: AWS::Serverless::Function
@@ -227,9 +292,20 @@ Resources:
             Queue: !GetAtt SQSQueue.Arn
             ScalingConfig:
                 MaximumConcurrency: 2
+  
+  PostgresAuditLogTriggerSQSLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${PostgresAuditLogTriggerSQS}'
+      RetentionInDays: 90  
+  
+  
    
   DBInitialization:
     Type: AWS::Serverless::Function
+    DependsOn: DBInitializationLogGroup
     Properties:
       FunctionName: !Sub ${AWS::StackName}-DBInitialization
       Description: Performs the DB Scripting after DB creation
@@ -240,7 +316,14 @@ Resources:
         MaximumRetryAttempts: 1
       Policies: 
         - !Ref SecretsPolicy
-            
+  
+  DBInitializationLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${AWS::StackName}-DBInitialization'
+      RetentionInDays: 30
   
   DBCustom:
     Type: Custom::DBInitialization
