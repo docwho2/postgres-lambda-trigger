@@ -47,6 +47,7 @@ Resources:
             
   FrontEnd:
     Type: AWS::Serverless::Function
+    DependsOn: FrontEndLogGroup
     Properties:
       FunctionName: !Sub ${AWS::StackName}-DemoFrontEnd
       Description: Displays Sample Postgres Table and allows Address Entry
@@ -69,11 +70,12 @@ Resources:
     UpdateReplacePolicy: Retain
     DeletionPolicy: Delete
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${FrontEnd}'
+      LogGroupName: !Sub '/aws/lambda/${AWS::StackName}-DemoFrontEnd'
       RetentionInDays: 90
             
   CreateAddress:
     Type: AWS::Serverless::Function
+    DependsOn: CreateAddressLogGroup
     Properties:
       FunctionName: !Sub ${AWS::StackName}-CreateAddressFrontEnd
       Description: Creates an address row in table and redirects back to /
@@ -96,11 +98,12 @@ Resources:
     UpdateReplacePolicy: Retain
     DeletionPolicy: Delete
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${CreateAddress}'
+      LogGroupName: !Sub '/aws/lambda/${AWS::StackName}-CreateAddressFrontEnd'
       RetentionInDays: 90
             
   MultipleAddress:
     Type: AWS::Serverless::Function
+    DependsOn: MultipleAddressLogGroup
     Properties:
       FunctionName: !Sub ${AWS::StackName}-CreateMultipleAddressFrontEnd
       Description: Creates multiple address rows in table and redirects back to /
@@ -123,11 +126,12 @@ Resources:
     UpdateReplacePolicy: Retain
     DeletionPolicy: Delete
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${MultipleAddress}'
+      LogGroupName: !Sub '/aws/lambda/${AWS::StackName}-CreateMultipleAddressFrontEnd'
       RetentionInDays: 90          
             
   DeleteAddress:
     Type: AWS::Serverless::Function
+    DependsOn: DeleteAddressLogGroup
     Properties:
       FunctionName: !Sub ${AWS::StackName}-DeleteAddressFrontEnd
       Description: Deletes an address row in table and redirects back to /
@@ -150,11 +154,12 @@ Resources:
     UpdateReplacePolicy: Retain
     DeletionPolicy: Delete
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${DeleteAddress}'
+      LogGroupName: !Sub '/aws/lambda/${AWS::StackName}-DeleteAddressFrontEnd'
       RetentionInDays: 90             
             
   DeleteAuditLog:
     Type: AWS::Serverless::Function
+    DependsOn: DeleteAuditLogLogGroup
     Properties:
       FunctionName: !Sub ${AWS::StackName}-DeleteAuditLogFrontEnd
       Description: Clears the audit_log table and redirects back to /
@@ -177,7 +182,7 @@ Resources:
     UpdateReplacePolicy: Retain
     DeletionPolicy: Delete
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${DeleteAuditLog}'
+      LogGroupName: !Sub '/aws/lambda/${AWS::StackName}-DeleteAuditLogFrontEnd'
       RetentionInDays: 90
     
     
