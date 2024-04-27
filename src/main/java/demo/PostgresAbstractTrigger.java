@@ -15,7 +15,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jooq.DSLContext;
 
 /**
  *  Base class for handling triggers from Postgres

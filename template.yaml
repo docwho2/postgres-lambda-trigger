@@ -17,14 +17,13 @@ Globals:
   Function:
     Environment: 
       Variables:
-        JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
         DB_MASTER_SECRET_ARN: !GetAtt RDSStack.Outputs.SecretArn
         DB_ENDPOINT: !GetAtt RDSStack.Outputs.Endpoint
         DB_NAME: !Ref DBNAMEPARAM
     CodeUri: .
     Architectures:
         - x86_64
-    Runtime: java17
+    Runtime: java21
     Timeout: 30
     MemorySize: 3009
 
@@ -262,7 +261,6 @@ Resources:
         Variables:
           SQS_QUEUE_URL: !Ref SQSQueue
           # Don't need to set anything for this lambda other than above
-          JAVA_TOOL_OPTIONS: !Ref AWS::NoValue
           DB_MASTER_SECRET_ARN: !Ref AWS::NoValue
           DB_ENDPOINT: !Ref AWS::NoValue
           DB_NAME: !Ref AWS::NoValue

@@ -5,7 +5,6 @@
 package demo;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.jooq.DataType;
 import org.jooq.JSONB;
 import org.jooq.impl.DSL;
 
