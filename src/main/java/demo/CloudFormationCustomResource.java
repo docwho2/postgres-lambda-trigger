@@ -6,12 +6,14 @@ package demo;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.CloudFormationCustomResourceEvent;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 import software.amazon.lambda.powertools.cloudformation.AbstractCustomResourceHandler;
 import software.amazon.lambda.powertools.cloudformation.Response;
@@ -46,7 +48,7 @@ public class CloudFormationCustomResource extends AbstractCustomResourceHandler 
             for (var file : sqlFiles) {
                 try {
                     dsl.execute(Files.readString(Path.of(task_root, "scripts", file)));
-                } catch (Exception e) {
+                } catch (IOException | DataAccessException e) {
                     log.error("Error processing SQL file " + file, e);
                 }
             }
@@ -60,7 +62,7 @@ public class CloudFormationCustomResource extends AbstractCustomResourceHandler 
                     .execute();
             
 
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             log.error("Could Not Process SQL Files", e);
         }
         return Response.builder()

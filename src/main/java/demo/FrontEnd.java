@@ -9,6 +9,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 /**
@@ -68,7 +69,7 @@ public class FrontEnd implements RequestHandler<APIGatewayProxyRequestEvent, API
             return response
                     .withStatusCode(200)
                     .withBody(sb.toString());
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             log.error("Front End Error", e);
             return response
                     .withBody(e.toString())
