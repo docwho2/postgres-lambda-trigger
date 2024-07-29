@@ -22,7 +22,7 @@ Globals:
         DB_NAME: !Ref DBNAMEPARAM
     CodeUri: .
     Architectures:
-        - x86_64
+        - arm64         # SnapStart now supports arm
     Runtime: java21
     Timeout: 30
     MemorySize: 3009
