@@ -48,7 +48,7 @@ To use the SAM CLI, you need the following tools.
 If you have brew installed then
 ```bash
 brew install aws-sam-cli
-brew install corretto21
+brew install corretto@21
 brew install maven
 ```
 
